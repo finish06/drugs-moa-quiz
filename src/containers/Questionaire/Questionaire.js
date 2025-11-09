@@ -154,7 +154,7 @@ class Questionaire extends Component {
             this.setState({
                 correct_answers: this.state.correct_answers + 1,
                 current_question: this.state.current_question + 1
-            })    
+            })
         }
         else {
             this.setState({
@@ -163,6 +163,16 @@ class Questionaire extends Component {
         }
         console.log(this.state.correct_answers)
         this.getQuestionDrug()
+    }
+
+    handleRetry = () => {
+        // Clear error and reload data
+        this.setState({
+            error: null,
+            loading: true
+        });
+        this.getQuestionDrug();
+        this.getMoa();
     }
 
     componentDidMount() {
@@ -186,6 +196,25 @@ class Questionaire extends Component {
                         textAlign: 'center'
                     }}>
                         <strong>Error:</strong> {error}
+                        <br />
+                        <button
+                            onClick={this.handleRetry}
+                            style={{
+                                marginTop: '15px',
+                                padding: '10px 20px',
+                                backgroundColor: '#721c24',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                fontWeight: 'bold'
+                            }}
+                            onMouseOver={(e) => e.target.style.backgroundColor = '#5a1419'}
+                            onMouseOut={(e) => e.target.style.backgroundColor = '#721c24'}
+                        >
+                            Retry
+                        </button>
                     </div>
                 )}
                 {loading && (
