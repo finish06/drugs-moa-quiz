@@ -1,0 +1,58 @@
+/* Answer list container */
+.answerList {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Answer button styling with accessibility focus */
+.answerButton {
+  width: 100%;
+  min-height: 44px; /* WCAG touch target minimum */
+  padding: 15px 20px;
+  margin: 10px 0;
+  font-size: 16px;
+  font-family: inherit;
+  text-align: left;
+  background-color: #f8f9fa;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: block;
+}
+
+/* Hover state for mouse users */
+.answerButton:hover {
+  background-color: #e9ecef;
+  border-color: #007bff;
+  transform: translateX(5px);
+}
+
+/* Focus state for keyboard navigation - WCAG compliant */
+.answerButton:focus {
+  outline: 3px solid #007bff;
+  outline-offset: 2px;
+  background-color: #e7f1ff;
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+}
+
+/* Active/pressed state */
+.answerButton:active {
+  background-color: #d3d3d3;
+  transform: scale(0.98);
+  border-color: #0056b3;
+}
+
+/* Remove focus outline for mouse clicks, keep for keyboard */
+.answerButton:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
+.answerButton:focus-visible {
+  outline: 3px solid #007bff;
+  outline-offset: 2px;
+}

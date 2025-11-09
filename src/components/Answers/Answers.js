@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Aux from '../../hoc/Aux'
+import classes from './Answers.module.css'
 
 
 const answers = (props) => {
@@ -18,9 +19,18 @@ const answers = (props) => {
     }
     return (
         <Aux>
-            <ul>
+            <ul className={classes.answerList}>
                 {listAnswers.map((answer, index) =>
-                    <li key={index} onClick={() => props.checkAnswer(answer)}>{answer}</li>
+                    <li key={index}>
+                        <button
+                            type="button"
+                            className={classes.answerButton}
+                            onClick={() => props.checkAnswer(answer)}
+                            aria-label={`Answer option ${index + 1}: ${answer}`}
+                        >
+                            {answer}
+                        </button>
+                    </li>
                 )}
             </ul>
         </Aux>
