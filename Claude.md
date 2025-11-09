@@ -75,6 +75,8 @@ The main container component managing quiz state and logic.
 - `current_question` - Question counter (0-10)
 - `total_questions` - Total questions (10)
 - `correct_answers` - Score counter
+- `loading` - Boolean for loading state
+- `error` - Error message string (null when no error)
 - `top_200` - Hardcoded list of 8 common drugs
 
 **Key Methods:**
@@ -82,6 +84,7 @@ The main container component managing quiz state and logic.
 - `getMoa()` - Fetches all MOA options from API
 - `getAnswerMoa(drug)` - Fetches correct MOA for specific drug
 - `checkAnswerClickHandler(moa)` - Validates answer and advances quiz
+- `handleRetry()` - Clears error state and reloads quiz data
 
 #### Question (Presentational)
 **Location:** `src/components/Question/Question.js`
@@ -226,10 +229,13 @@ Creates optimized production build in `/build`:
    - Should fetch dynamically from backend
    - Name suggests 200 drugs but only implements 8
 
-3. **No Error Handling UI**
-   - API errors only logged to console
-   - No user-facing error messages
-   - No loading states displayed
+3. **✅ FIXED: No Error Handling UI**
+   - ~~API errors only logged to console~~
+   - ~~No user-facing error messages~~
+   - ~~No loading states displayed~~
+   - Now displays error banners with user-friendly messages
+   - Loading indicators implemented
+   - Retry button for failed requests
 
 ### Code Quality Issues
 
@@ -291,10 +297,11 @@ Creates optimized production build in `/build`:
    - Already implemented using `process.env.REACT_APP_API_URL`
    - See `.env.example` for configuration template
 
-2. **Error Handling**
-   - Add loading states during API calls
-   - Display user-friendly error messages
-   - Implement retry logic for failed requests
+2. **✅ COMPLETED: Error Handling**
+   - Loading states implemented with visual indicators
+   - User-friendly error messages displayed in error banners
+   - Retry button implemented for failed requests
+   - Comprehensive error handling in all API calls
 
 3. **Update Tests**
    - Fix `App.test.js` to match current implementation
