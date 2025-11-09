@@ -42,8 +42,7 @@ drugs-moa-quiz/
 │   │   └── Aux.js             # Fragment-like wrapper
 │   ├── App.js                 # Root component
 │   ├── index.js               # Entry point
-│   ├── axios-orders.js        # Axios configuration
-│   ├── config.js              # API configuration
+│   ├── axios-orders.js        # Axios configuration with env variables
 │   └── *.css                  # Styling
 └── package.json               # Dependencies & scripts
 ```
@@ -124,9 +123,9 @@ Header component displaying "Do You Know Drugs?" - currently not rendered in the
 
 ### Configuration
 
-**API Base URL:** `http://192.168.1.219:8000`
-**Config File:** `src/config.js`
+**API Base URL:** Configured via environment variable `REACT_APP_API_URL` (defaults to `http://localhost:8000`)
 **Axios Instance:** `src/axios-orders.js`
+**Environment File:** `.env` (see `.env.example` for template)
 
 ### Endpoints
 
@@ -216,10 +215,11 @@ Creates optimized production build in `/build`:
 
 ### Critical Issues
 
-1. **Hardcoded Local IP Address**
-   - API URL uses local network address `192.168.1.219:8000`
-   - Not suitable for production deployment
-   - Should use environment variables
+1. **✅ FIXED: Hardcoded Local IP Address**
+   - ~~API URL uses local network address `192.168.1.219:8000`~~
+   - ~~Not suitable for production deployment~~
+   - Now uses environment variables via `REACT_APP_API_URL`
+   - Configuration documented in README.md
 
 2. **Limited Drug Database**
    - Only 8 drugs hardcoded in `top_200` array
@@ -258,7 +258,7 @@ Creates optimized production build in `/build`:
    - No state persistence between sessions
 
 9. **API Configuration**
-   - No environment-based configuration
+   - ✅ Environment-based configuration implemented
    - No API error retry logic
    - No request/response interceptors
 
@@ -287,11 +287,9 @@ Creates optimized production build in `/build`:
 
 ### Immediate Improvements
 
-1. **Environment Configuration**
-   ```javascript
-   // Use environment variables
-   API_URL: process.env.REACT_APP_API_URL || 'http://localhost:8000'
-   ```
+1. **✅ COMPLETED: Environment Configuration**
+   - Already implemented using `process.env.REACT_APP_API_URL`
+   - See `.env.example` for configuration template
 
 2. **Error Handling**
    - Add loading states during API calls
