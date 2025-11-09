@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import axios from '../../axios-orders';
 
-import '../../config';
-
 import Aux from '../../hoc/Aux';
 
-import Banner from '../../components/Banner/Banner';
 import Question from '../../components/Question/Question'
 import Answers from '../../components/Answers/Answers'
 
@@ -20,6 +17,8 @@ class Questionaire extends Component {
             current_question: 0,
             total_questions: 10,
             correct_answers: 0,
+            loading: false,
+            error: null,
             top_200: [
                 'lisinopril',
                 'atorvastatin calcium',
@@ -45,55 +44,108 @@ class Questionaire extends Component {
     getMoa = () => {
         const url = '/api/drug/moa/?format=json';
         let db_moa = [];
+
+        this.setState({ loading: true, error: null });
+
         axios.get(url)
             .then(response => {
-                for (const moa in response.data) {
-                    db_moa.push(response.data[moa]['moa'])
+                // Validate response data
+                if (response?.data && Array.isArray(response.data)) {
+                    for (const moaObj of response.data) {
+                        if (moaObj?.moa) {
+                            db_moa.push(moaObj.moa);
+                        }
+                    }
+
+                    if (db_moa.length === 0) {
+                        throw new Error('No MOA data received from server');
+                    }
+
+                    this.setState({
+                        moa: [...db_moa],
+                        loading: false
+                    });
+                } else {
+                    throw new Error('Invalid response format from server');
                 }
-                this.setState({
-                    moa: [...db_moa]
-                });
             })
             .catch(error => {
-                console.log(error);
+                console.error('Error fetching MOAs:', error);
+                const errorMessage = error.response?.data?.detail ||
+                                   error.message ||
+                                   'Failed to load answer options. Please check your connection and try again.';
+                this.setState({
+                    error: errorMessage,
+                    loading: false
+                });
             })
     }
 
     getAnswerMoa = (drug) => {
-        const url = '/api/drug/drugs/?format=json&generic=' + drug;
+        const url = '/api/drug/drugs/?format=json&generic=' + encodeURIComponent(drug);
+
+        this.setState({ loading: true, error: null });
+
         axios.get(url)
             .then(response => {
-                let drug_answer = '';
-                for (const drug in response.data) {
-                    drug_answer = response.data[drug]['moa'][0]['moa']
-                    if (drug_answer) {
-                        break;
+                // Validate response data with optional chaining
+                if (response?.data && Array.isArray(response.data) && response.data.length > 0) {
+                    const drugData = response.data[0];
+                    const drug_answer = drugData?.moa?.[0]?.moa || '';
+
+                    if (!drug_answer) {
+                        throw new Error(`No MOA found for drug: ${drug}`);
                     }
+
+                    this.setState({
+                        answer: drug_answer,
+                        loading: false
+                    });
+                } else {
+                    throw new Error(`Drug not found: ${drug}`);
                 }
-                this.setState({
-                    answer: drug_answer
-                })
             })
             .catch(error => {
-                console.log(error)
+                console.error('Error fetching drug answer:', error);
+                const errorMessage = error.response?.data?.detail ||
+                                   error.message ||
+                                   'Failed to load question data. Please try again.';
+                this.setState({
+                    error: errorMessage,
+                    loading: false
+                });
+                // Try loading another drug
+                this.getQuestionDrug();
             })
-        console.log(this.state.answer)
     }
 
     getQuestionAnswer = (drug) => {
-        const url = '/api/drug/drugs/?format=json&generic=' + drug;
+        const url = '/api/drug/drugs/?format=json&generic=' + encodeURIComponent(drug);
         let db_drugs = [];
+
         axios.get(url)
             .then(response => {
-                for (const key in response.data) {
-                    db_drugs.push({'key': key, 'generic': response.data[key]['generic_name'], 'brand': response.data[key]})
-                };
-                this.setState({
-                    drugs: [...db_drugs]
-                })
+                // Validate response data with optional chaining
+                if (response?.data && Array.isArray(response.data)) {
+                    for (const drugData of response.data) {
+                        if (drugData?.generic_name) {
+                            db_drugs.push({
+                                'key': drugData.id || Math.random(),
+                                'generic': drugData.generic_name,
+                                'brand': drugData
+                            });
+                        }
+                    }
+                    this.setState({
+                        drugs: [...db_drugs]
+                    });
+                } else {
+                    console.warn('Invalid response format for drug details');
+                }
             })
             .catch(error => {
-                console.log(error)
+                console.error('Error fetching drug details:', error);
+                // Non-critical error, don't show to user
             })
     }
 
@@ -119,15 +171,45 @@ class Questionaire extends Component {
     }
 
     render() {
+        const { loading, error, current_drug, answer, moa } = this.state;
+
         return (
             <Aux>
-                <Question drug={this.state.current_drug}></Question>
-                <Answers
-                    position={Math.floor(Math.random() * 4) + 1}
-                    correct={this.state.answer}
-                    options={this.state.moa}
-                    checkAnswer={this.checkAnswerClickHandler}>
-                </Answers>
+                {error && (
+                    <div style={{
+                        padding: '20px',
+                        margin: '20px',
+                        backgroundColor: '#f8d7da',
+                        color: '#721c24',
+                        border: '1px solid #f5c6cb',
+                        borderRadius: '4px',
+                        textAlign: 'center'
+                    }}>
+                        <strong>Error:</strong> {error}
+                    </div>
+                )}
+                {loading && (
+                    <div style={{
+                        padding: '20px',
+                        margin: '20px',
+                        textAlign: 'center',
+                        fontSize: '18px',
+                        color: '#007bff'
+                    }}>
+                        Loading...
+                    </div>
+                )}
+                {!loading && !error && (
+                    <>
+                        <Question drug={current_drug}></Question>
+                        <Answers
+                            position={Math.floor(Math.random() * 4) + 1}
+                            correct={answer}
+                            options={moa}
+                            checkAnswer={this.checkAnswerClickHandler}>
+                        </Answers>
+                    </>
+                )}
             </Aux>
         );
     }
