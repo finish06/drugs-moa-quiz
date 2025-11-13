@@ -17,6 +17,7 @@ class Questionaire extends Component {
             current_question: 0,
             total_questions: 10,
             correct_answers: 0,
+            answer_position: 1,
             quizCompleted: false,
             loading: false,
             error: null,
@@ -35,9 +36,11 @@ class Questionaire extends Component {
 
     getQuestionDrug = () => {
         const drug = this.state.top_200[Math.floor(Math.random() * this.state.top_200.length)];
+        const position = Math.floor(Math.random() * 4) + 1;
         console.log(drug)
         this.setState({
-            current_drug: drug
+            current_drug: drug,
+            answer_position: position
         })
         this.getAnswerMoa(drug)
     }
@@ -181,7 +184,8 @@ class Questionaire extends Component {
             correct_answers: 0,
             quizCompleted: false,
             answer: '',
-            current_drug: ''
+            current_drug: '',
+            answer_position: 1
         });
         this.getQuestionDrug();
     }
@@ -299,7 +303,7 @@ class Questionaire extends Component {
                             totalQuestions={this.state.total_questions}>
                         </Question>
                         <Answers
-                            position={Math.floor(Math.random() * 4) + 1}
+                            position={this.state.answer_position}
                             correct={answer}
                             options={moa}
                             checkAnswer={this.checkAnswerClickHandler}>
