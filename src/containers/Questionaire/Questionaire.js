@@ -5,6 +5,7 @@ import Aux from '../../hoc/Aux';
 
 import Question from '../../components/Question/Question'
 import Answers from '../../components/Answers/Answers'
+import Loading from '../../components/Loading/Loading'
 
 class Questionaire extends Component {
     constructor(props) {
@@ -214,17 +215,7 @@ class Questionaire extends Component {
                         </button>
                     </div>
                 )}
-                {loading && (
-                    <div style={{
-                        padding: '20px',
-                        margin: '20px',
-                        textAlign: 'center',
-                        fontSize: '18px',
-                        color: '#007bff'
-                    }}>
-                        Loading...
-                    </div>
-                )}
+                {loading && <Loading />}
                 {!loading && !error && quizCompleted && (
                     <div style={{
                         padding: '40px',
