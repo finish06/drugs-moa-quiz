@@ -97,7 +97,7 @@ class Questionaire extends Component {
                     const drug_answer = drugData?.moa?.[0]?.moa || '';
 
                     if (!drug_answer) {
-                        throw new Error(`No MOA found for drug: ${drug}`);
+                        throw new Error(`No MOA found for drug: \${drug}`);
                     }
 
                     this.setState({
@@ -105,7 +105,7 @@ class Questionaire extends Component {
                         loading: false
                     });
                 } else {
-                    throw new Error(`Drug not found: ${drug}`);
+                    throw new Error(`Drug not found: \${drug}`);
                 }
             })
             .catch(error => {
@@ -182,103 +182,126 @@ class Questionaire extends Component {
 
         return (
             <Aux>
-                {error && (
-                    <div style={{
-                        padding: '20px',
-                        margin: '20px',
-                        backgroundColor: '#f8d7da',
-                        color: '#721c24',
-                        border: '1px solid #f5c6cb',
-                        borderRadius: '4px',
-                        textAlign: 'center'
-                    }}>
-                        <strong>Error:</strong> {error}
-                        <br />
-                        <button
-                            onClick={this.handleRetry}
+                <main role="main" aria-label="Drug Mechanism of Action Quiz">
+                    {error && (
+                        <div
+                            role="alert"
+                            aria-live="assertive"
                             style={{
-                                marginTop: '15px',
-                                padding: '10px 20px',
-                                backgroundColor: '#721c24',
-                                color: 'white',
-                                border: 'none',
+                                padding: '20px',
+                                margin: '20px',
+                                backgroundColor: '#f8d7da',
+                                color: '#721c24',
+                                border: '1px solid #f5c6cb',
                                 borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontSize: '14px',
-                                fontWeight: 'bold'
+                                textAlign: 'center'
                             }}
-                            onMouseOver={(e) => e.target.style.backgroundColor = '#5a1419'}
-                            onMouseOut={(e) => e.target.style.backgroundColor = '#721c24'}
                         >
-                            Retry
-                        </button>
-                    </div>
-                )}
-                {loading && (
-                    <div style={{
-                        padding: '20px',
-                        margin: '20px',
-                        textAlign: 'center',
-                        fontSize: '18px',
-                        color: '#007bff'
-                    }}>
-                        Loading...
-                    </div>
-                )}
-                {!loading && !error && quizCompleted && (
-                    <div style={{
-                        padding: '40px',
-                        margin: '20px auto',
-                        maxWidth: '600px',
-                        textAlign: 'center',
-                        backgroundColor: '#d4edda',
-                        border: '1px solid #c3e6cb',
-                        borderRadius: '8px'
-                    }}>
-                        <h2 style={{ color: '#155724', marginBottom: '20px' }}>Quiz Complete!</h2>
-                        <div style={{ fontSize: '24px', marginBottom: '10px' }}>
-                            <strong>Your Score:</strong>
+                            <strong>Error:</strong> {error}
+                            <br />
+                            <button
+                                onClick={this.handleRetry}
+                                aria-label="Retry loading quiz data"
+                                type="button"
+                                style={{
+                                    marginTop: '15px',
+                                    padding: '10px 20px',
+                                    backgroundColor: '#721c24',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    fontWeight: 'bold'
+                                }}
+                                onMouseOver={(e) => e.target.style.backgroundColor = '#5a1419'}
+                                onMouseOut={(e) => e.target.style.backgroundColor = '#721c24'}
+                            >
+                                Retry
+                            </button>
                         </div>
-                        <div style={{ fontSize: '48px', fontWeight: 'bold', color: '#155724', marginBottom: '10px' }}>
-                            {correct_answers} / {total_questions}
-                        </div>
-                        <div style={{ fontSize: '32px', color: '#155724', marginBottom: '30px' }}>
-                            {percentage}%
-                        </div>
-                        <button
-                            onClick={this.restartQuiz}
+                    )}
+                    {loading && (
+                        <div
+                            role="status"
+                            aria-live="polite"
+                            aria-label="Loading quiz data"
                             style={{
-                                padding: '15px 40px',
+                                padding: '20px',
+                                margin: '20px',
+                                textAlign: 'center',
                                 fontSize: '18px',
-                                backgroundColor: '#28a745',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '5px',
-                                cursor: 'pointer',
-                                fontWeight: 'bold'
+                                color: '#007bff'
                             }}
-                            onMouseOver={(e) => e.target.style.backgroundColor = '#218838'}
-                            onMouseOut={(e) => e.target.style.backgroundColor = '#28a745'}
                         >
-                            Restart Quiz
-                        </button>
-                    </div>
-                )}
-                {!loading && !error && !quizCompleted && (
-                    <>
-                        <Question
-                            drug={current_drug}
-                            currentQuestion={this.state.current_question}
-                            totalQuestions={this.state.total_questions}>
-                        </Question>
-                        <Answers
-                            position={this.state.answer_position}
-                            correct={answer}
-                            options={moa}
-                            checkAnswer={this.checkAnswerClickHandler}>
-                        </Answers>
-                    </>
-                )}
+                            Loading...
+                        </div>
+                    )}
+                    {!loading && !error && quizCompleted && (
+                        <section
+                            role="region"
+                            aria-labelledby="quiz-complete-heading"
+                            style={{
+                                padding: '40px',
+                                margin: '20px auto',
+                                maxWidth: '600px',
+                                textAlign: 'center',
+                                backgroundColor: '#d4edda',
+                                border: '1px solid #c3e6cb',
+                                borderRadius: '8px'
+                            }}
+                        >
+                            <h2 id="quiz-complete-heading" style={{ color: '#155724', marginBottom: '20px' }}>Quiz Complete!</h2>
+                            <div style={{ fontSize: '24px', marginBottom: '10px' }}>
+                                <strong>Your Score:</strong>
+                            </div>
+                            <div
+                                role="status"
+                                aria-label={`You scored \${correct_answers} out of \${total_questions}, which is \${percentage} percent`}
+                                style={{ fontSize: '48px', fontWeight: 'bold', color: '#155724', marginBottom: '10px' }}
+                            >
+                                {correct_answers} / {total_questions}
+                            </div>
+                            <div style={{ fontSize: '32px', color: '#155724', marginBottom: '30px' }}>
+                                {percentage}%
+                            </div>
+                            <button
+                                onClick={this.restartQuiz}
+                                aria-label="Restart the quiz and try again"
+                                type="button"
+                                style={{
+                                    padding: '15px 40px',
+                                    fontSize: '18px',
+                                    backgroundColor: '#28a745',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '5px',
+                                    cursor: 'pointer',
+                                    fontWeight: 'bold'
+                                }}
+                                onMouseOver={(e) => e.target.style.backgroundColor = '#218838'}
+                                onMouseOut={(e) => e.target.style.backgroundColor = '#28a745'}
+                            >
+                                Restart Quiz
+                            </button>
+                        </section>
+                    )}
+                    {!loading && !error && !quizCompleted && (
+                        <section aria-labelledby="quiz-question">
+                            <Question
+                                drug={current_drug}
+                                currentQuestion={this.state.current_question}
+                                totalQuestions={this.state.total_questions}>
+                            </Question>
+                            <Answers
+                                position={this.state.answer_position}
+                                correct={answer}
+                                options={moa}
+                                checkAnswer={this.checkAnswerClickHandler}>
+                            </Answers>
+                        </section>
+                    )}
+                </main>
             </Aux>
         );
     }
