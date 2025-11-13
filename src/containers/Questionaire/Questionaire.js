@@ -293,7 +293,11 @@ class Questionaire extends Component {
                 )}
                 {!loading && !error && !quizCompleted && (
                     <>
-                        <Question drug={current_drug}></Question>
+                        <Question
+                            drug={current_drug}
+                            currentQuestion={this.state.current_question}
+                            totalQuestions={this.state.total_questions}>
+                        </Question>
                         <Answers
                             position={Math.floor(Math.random() * 4) + 1}
                             correct={answer}
