@@ -264,7 +264,7 @@ class Questionaire extends Component {
                         </button>
                     </div>
                 )}
-                {!loading && !error && !quizCompleted && (
+                {!loading && !error && !quizCompleted && current_drug && answer && moa.length > 0 && (
                     <>
                         <Question
                             drug={current_drug}
