@@ -131,6 +131,84 @@ The API allows requests from:
 
 To modify CORS settings, edit `app/main.py`.
 
+## Testing
+
+### Setup Test Environment
+
+1. **Install test dependencies:**
+   ```bash
+   pip install -r requirements-dev.txt
+   ```
+
+2. **Run all tests:**
+   ```bash
+   pytest
+   ```
+
+3. **Run tests with coverage:**
+   ```bash
+   pytest --cov=app --cov-report=term-missing
+   ```
+
+4. **Run tests with HTML coverage report:**
+   ```bash
+   pytest --cov=app --cov-report=html
+   # Open htmlcov/index.html in your browser
+   ```
+
+### Test Organization
+
+```
+backend/tests/
+├── unit/               # Unit tests for individual modules
+├── integration/        # API endpoint integration tests
+├── performance/        # Performance and benchmark tests
+├── conftest.py         # Shared fixtures and test configuration
+└── test_setup.py       # Basic setup verification test
+```
+
+### Running Specific Test Types
+
+```bash
+# Run only unit tests
+pytest -m unit
+
+# Run only integration tests
+pytest -m integration
+
+# Run a specific test file
+pytest tests/unit/test_data.py
+
+# Run a specific test function
+pytest tests/unit/test_data.py::test_get_all_moas
+
+# Run tests in verbose mode
+pytest -v
+
+# Run tests in parallel (faster)
+pytest -n auto
+```
+
+### Test Coverage Goals
+
+- **Overall Backend Coverage:** 80% minimum
+- **Data Layer (app/data.py):** 90% minimum
+- **Models (app/models.py):** 95% minimum
+- **API Endpoints (app/main.py):** 100% endpoint coverage
+
+### Writing Tests
+
+All tests have access to shared fixtures defined in `tests/conftest.py`:
+
+```python
+def test_example(client, sample_drug):
+    """Example test using fixtures."""
+    response = client.get(f"/api/drug/drugs/?generic={sample_drug.generic}")
+    assert response.status_code == 200
+```
+
+See `TESTING_QUICKSTART.md` in the project root for detailed testing examples.
+
 ## Production Deployment
 
 For production, use a production-grade ASGI server:

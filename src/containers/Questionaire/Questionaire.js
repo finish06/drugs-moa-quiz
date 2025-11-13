@@ -17,6 +17,7 @@ class Questionaire extends Component {
             current_question: 0,
             total_questions: 10,
             correct_answers: 0,
+            quizCompleted: false,
             loading: false,
             error: null,
             top_200: [
@@ -150,19 +151,39 @@ class Questionaire extends Component {
     }
 
     checkAnswerClickHandler = (moa) => {
-        if (moa === this.state.answer) {
+        const isCorrect = moa === this.state.answer;
+        const nextQuestion = this.state.current_question + 1;
+        const isLastQuestion = nextQuestion >= this.state.total_questions;
+
+        if (isCorrect) {
             this.setState({
                 correct_answers: this.state.correct_answers + 1,
-                current_question: this.state.current_question + 1
+                current_question: nextQuestion,
+                quizCompleted: isLastQuestion
             })
         }
         else {
             this.setState({
-                current_question: this.state.current_question + 1
+                current_question: nextQuestion,
+                quizCompleted: isLastQuestion
             })
         }
-        console.log(this.state.correct_answers)
-        this.getQuestionDrug()
+
+        // Only get next question if quiz is not complete
+        if (!isLastQuestion) {
+            this.getQuestionDrug()
+        }
+    }
+
+    restartQuiz = () => {
+        this.setState({
+            current_question: 0,
+            correct_answers: 0,
+            quizCompleted: false,
+            answer: '',
+            current_drug: ''
+        });
+        this.getQuestionDrug();
     }
 
     handleRetry = () => {
@@ -181,7 +202,10 @@ class Questionaire extends Component {
     }
 
     render() {
-        const { loading, error, current_drug, answer, moa } = this.state;
+        const { loading, error, current_drug, answer, moa, quizCompleted, correct_answers, total_questions } = this.state;
+
+        // Calculate percentage
+        const percentage = Math.round((correct_answers / total_questions) * 100);
 
         return (
             <Aux>
@@ -228,7 +252,46 @@ class Questionaire extends Component {
                         Loading...
                     </div>
                 )}
-                {!loading && !error && (
+                {!loading && !error && quizCompleted && (
+                    <div style={{
+                        padding: '40px',
+                        margin: '20px auto',
+                        maxWidth: '600px',
+                        textAlign: 'center',
+                        backgroundColor: '#d4edda',
+                        border: '1px solid #c3e6cb',
+                        borderRadius: '8px'
+                    }}>
+                        <h2 style={{ color: '#155724', marginBottom: '20px' }}>Quiz Complete!</h2>
+                        <div style={{ fontSize: '24px', marginBottom: '10px' }}>
+                            <strong>Your Score:</strong>
+                        </div>
+                        <div style={{ fontSize: '48px', fontWeight: 'bold', color: '#155724', marginBottom: '10px' }}>
+                            {correct_answers} / {total_questions}
+                        </div>
+                        <div style={{ fontSize: '32px', color: '#155724', marginBottom: '30px' }}>
+                            {percentage}%
+                        </div>
+                        <button
+                            onClick={this.restartQuiz}
+                            style={{
+                                padding: '15px 40px',
+                                fontSize: '18px',
+                                backgroundColor: '#28a745',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                                fontWeight: 'bold'
+                            }}
+                            onMouseOver={(e) => e.target.style.backgroundColor = '#218838'}
+                            onMouseOut={(e) => e.target.style.backgroundColor = '#28a745'}
+                        >
+                            Restart Quiz
+                        </button>
+                    </div>
+                )}
+                {!loading && !error && !quizCompleted && (
                     <>
                         <Question drug={current_drug}></Question>
                         <Answers

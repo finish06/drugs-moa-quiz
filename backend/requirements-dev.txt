@@ -1,0 +1,19 @@
+# Testing Dependencies for Drugs MOA Quiz Backend
+
+# Core Testing Framework
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-asyncio==0.21.1
+
+# HTTP Client for API Testing
+httpx==0.25.2
+
+# Code Quality Tools
+pytest-xdist==3.5.0        # Parallel test execution
+pytest-sugar==0.9.7        # Better test output
+
+# Performance Testing
+pytest-benchmark==4.0.0
+
+# Code Coverage
+coverage[toml]==7.3.2
