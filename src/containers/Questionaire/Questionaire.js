@@ -10,7 +10,6 @@ class Questionaire extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            drugs: [],
             moa: [],
             answer: '',
             current_drug: '',
@@ -120,36 +119,6 @@ class Questionaire extends Component {
                 });
                 // Try loading another drug
                 this.getQuestionDrug();
-            })
-    }
-
-    getQuestionAnswer = (drug) => {
-        const url = '/api/drug/drugs/?format=json&generic=' + encodeURIComponent(drug);
-        let db_drugs = [];
-
-        axios.get(url)
-            .then(response => {
-                // Validate response data with optional chaining
-                if (response?.data && Array.isArray(response.data)) {
-                    for (const drugData of response.data) {
-                        if (drugData?.generic_name) {
-                            db_drugs.push({
-                                'key': drugData.id || Math.random(),
-                                'generic': drugData.generic_name,
-                                'brand': drugData
-                            });
-                        }
-                    }
-                    this.setState({
-                        drugs: [...db_drugs]
-                    });
-                } else {
-                    console.warn('Invalid response format for drug details');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching drug details:', error);
-                // Non-critical error, don't show to user
             })
     }
 
