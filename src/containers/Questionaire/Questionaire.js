@@ -5,6 +5,7 @@ import Aux from '../../hoc/Aux';
 
 import Question from '../../components/Question/Question'
 import Answers from '../../components/Answers/Answers'
+import Loading from '../../components/Loading/Loading'
 
 class Questionaire extends Component {
     constructor(props) {
@@ -97,7 +98,7 @@ class Questionaire extends Component {
                     const drug_answer = drugData?.moa?.[0]?.moa || '';
 
                     if (!drug_answer) {
-                        throw new Error(`No MOA found for drug: \${drug}`);
+                        throw new Error(`No MOA found for drug: ${drug}`);
                     }
 
                     this.setState({
@@ -105,7 +106,7 @@ class Questionaire extends Component {
                         loading: false
                     });
                 } else {
-                    throw new Error(`Drug not found: \${drug}`);
+                    throw new Error(`Drug not found: ${drug}`);
                 }
             })
             .catch(error => {
@@ -221,22 +222,7 @@ class Questionaire extends Component {
                             </button>
                         </div>
                     )}
-                    {loading && (
-                        <div
-                            role="status"
-                            aria-live="polite"
-                            aria-label="Loading quiz data"
-                            style={{
-                                padding: '20px',
-                                margin: '20px',
-                                textAlign: 'center',
-                                fontSize: '18px',
-                                color: '#007bff'
-                            }}
-                        >
-                            Loading...
-                        </div>
-                    )}
+                    {loading && <Loading />}
                     {!loading && !error && quizCompleted && (
                         <section
                             role="region"
@@ -257,7 +243,7 @@ class Questionaire extends Component {
                             </div>
                             <div
                                 role="status"
-                                aria-label={`You scored \${correct_answers} out of \${total_questions}, which is \${percentage} percent`}
+                                aria-label={`You scored ${correct_answers} out of ${total_questions}, which is ${percentage} percent`}
                                 style={{ fontSize: '48px', fontWeight: 'bold', color: '#155724', marginBottom: '10px' }}
                             >
                                 {correct_answers} / {total_questions}
@@ -286,7 +272,7 @@ class Questionaire extends Component {
                             </button>
                         </section>
                     )}
-                    {!loading && !error && !quizCompleted && (
+                    {!loading && !error && !quizCompleted && current_drug && answer && moa.length > 0 && (
                         <section aria-labelledby="quiz-question">
                             <Question
                                 drug={current_drug}
